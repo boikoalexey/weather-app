@@ -8,9 +8,9 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<main class="container">
+<header class="header-container">
   <div class="header">
-    <h2>X<span class="title">Meteo</span></h2>
+    <h2 class="title">XMeteo</h2>
     <div class="weather-input">
       <div class="search-container">
         <input type="text" name="city" id="city_input" placeholder="Enter city name">
@@ -25,17 +25,20 @@
       </button>
     </div>
   </div>
+</header>
+<main class="container">
+  <div class="page-title">
+    <h1></h1>
+  </div>
   <div class="weather-data">
     <div class="current-weather" id="currentWeather">
-      <div class="current-weather__header">Loading city data...</div>
-      <div class="current-weather__temperature">Fetching weather details...</div>
-      <div class="current-weather__feels-like">Please wait...</div>
+      <div>
+        <div class="current-weather__header">Loading city data...</div>
+        <div class="current-weather__temperature">Fetching weather details...</div>
+        <div class="current-weather__feels-like">Please wait...</div>
+      </div>
     </div>
     <div class="forecast">
-      <div class="forecast__header">
-        <h2>Weather in your location</h2>
-        <p>Fetching detailed location data...</p>
-      </div>
       <nav class="navigation">
         <a id="today" class="active" data-mode="Today">Today</a>
         <a id="tomorrow" data-mode="Tomorrow">Tomorrow</a>
