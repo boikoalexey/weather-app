@@ -3,20 +3,51 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Weather App</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>XMeteo</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-  <h1>Weather App</h1>
-  <input type="text" id="locationInput" placeholder="Enter a city">
-  <button id="searchButton">Search</button>
-  <div class="weather-info">
-    <h2 id="location"></h2>
-    <p id="temperature"></p>
-    <p id="description"></p>
+<main class="container">
+  <div class="header">
+    <h2>X<span class="title">Meteo</span></h2>
+    <div class="weather-input">
+      <div class="search-container">
+        <input type="text" name="city" id="city_input" placeholder="Enter city name">
+        <button type="button" id="searchBtn">
+          <span class="material-icons">search</span>
+        </button>
+      </div>
+      <button type="button" id="locationBtn">
+        <span class="material-icons">
+          my_location
+        </span>
+      </button>
+    </div>
   </div>
-</div>
+  <div class="weather-data">
+    <div class="current-weather" id="currentWeather">
+      <div class="current-weather__header">Loading city data...</div>
+      <div class="current-weather__temperature">Fetching weather details...</div>
+      <div class="current-weather__feels-like">Please wait...</div>
+    </div>
+    <div class="forecast">
+      <div class="forecast__header">
+        <h2>Weather in your location</h2>
+        <p>Fetching detailed location data...</p>
+      </div>
+      <nav class="navigation">
+        <a id="today" class="active" data-mode="Today">Today</a>
+        <a id="tomorrow" data-mode="Tomorrow">Tomorrow</a>
+        <a id="fiveDay" data-mode="5-Day">5-Day</a>
+        <a id="tenDay" data-mode="10-Day">10-Day</a>
+        <a id="month" data-mode="Month">Month</a>
+      </nav>
+    </div>
+    <div id="weather-container" class="weather-container"></div>
+  </div>
+</main>
+
 <script src="script.js"></script>
 </body>
 </html>
