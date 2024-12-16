@@ -1,53 +1,252 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+:root {
+    --bg-color1: #f0f0f080;
+    --bg-color2: rgba(228, 236, 236, 0.92);
+    --primary: #ea6e4b;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    color: white;
+}
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
+    width: 100%;
+    background-size: cover;
+    background: url('bg.webp') center;
 }
-
+body::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100dvh;
+    background: rgb(0, 0, 0, 0.15);
+    backdrop-filter: blur(15px);
+}
 .container {
-    max-width: 400px;
-    margin: 105px auto 0;
-    text-align: center;
-    padding: 20px;
-    background-color: rgba(255, 255, 255, 0.5); /* Set the background color to be transparent */
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* Adjust the alpha value here for the box shadow transparency */
+    max-width: 550px;
+    margin: auto;
+    z-index: 1;
+    background: linear-gradient(
+            to top,
+            rgb(0, 0, 0, 0.15),
+            rgb(255, 255, 255, 0.15)
+    );
+    border-radius: 12px;
+    backdrop-filter: blur(100px);
+}
+hr {
+    margin-bottom: 10px;
+}
+.title {
+    color: var(--primary);
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+}
+.weather-input {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+.search-container {
+    position: relative;
+    display: inline-block;
 }
 
-h1 {
-    font-size: 24px;
+#city_input {
+    background-color: rgb(0, 0, 0, 0.15);
+    max-width: 0;
+    border: 3px solid transparent;
+    padding: 6px 40px 6px 12px;
+    font-size: 16px;
+    border-radius: 25px;
+    outline: none;
+    box-sizing: border-box;
+    transition: max-width 0.5s ease, opacity 0.5s ease, 0.25s border;
+    opacity: 0;
 }
-
-input[type="text"] {
-    width: auto;
-    max-width: 350px;
-    padding: 10px;
-    margin: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+#city_input::placeholder {
+    border: rgb(255, 255, 255, 0.75);
 }
-
-button {
-    background-color: #007BFF;
-    color: #fff;
+#city_input.visible {
+    max-width: 250px;
+    opacity: 1;
+    padding-left: 12px;
+}
+@media (max-width: 430px) {
+    #city_input.visible {
+        max-width: 220px;
+    }
+}
+@media (max-width: 380px) {
+    #city_input.visible {
+        max-width: 170px;
+    }
+}
+#searchBtn {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    padding: 8px;
     border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
+    cursor: pointer;
+    border-radius: 50%;
+    background-color: rgb(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+#locationBtn {
+    display: flex;
+    align-items: center;
+    border-radius: 50%;
+    padding: 8px;
+    border: none;
+    cursor: pointer;
+    background-color: rgb(0, 0, 0, 0.15);
+}
+#locationBtn.visible {
+    border-radius: 0;
+    background: none;
+    padding: 0;
+}
+.current-weather {
+    padding: 15px;
+    color: #333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.current-weather__header {
+    font-weight: bold;
+    font-size: 16px;
+    color: #666;
+}
+.current-weather__temperature {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+.current-weather__feels-like {
+    font-weight: bold;
+    font-size: 16px;
+    color: #666;
+}
+.forecast {
+    margin: 10px auto;
+    padding-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.forecast__header {
+    margin-bottom: 6px;
+    padding: 15px;
+}
+.forecast h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+.navigation {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) transparent;
+}
+.navigation a {
+    color: white;
+    text-decoration: none;
+    margin: 20px 10px;
+    padding: 10px 15px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: rgb(0, 0, 0, 0.15);
+    transition: background-color 0.3s;
+    white-space: nowrap;
     cursor: pointer;
 }
-
-.weather-info {
-    margin-top: 20px;
+.navigation a:hover,
+.navigation a.active {
+    color: white;
+    background-color: var(--primary);
 }
-
-body {
-    font-family: Arial, sans-serif;
-    /* background-color: #f0f0f0; */
-
-    background-image: url('weather.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    height: 100vh; /* Set the height to fill the viewport */
-    margin: 0; /* Remove default margin */
-    padding: 0;
+#weather-container {
+    display: flex;
+    justify-content: flex-start;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary) transparent;
+    gap: 20px;
+    padding: 0 10px 6px;
+    cursor: grab;
+    user-select: none;
+}
+.weather-card {
+    flex: 0 0 255px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: rgb(255, 255, 255, 0.1);;
+    border-radius: 8px;
+    padding: 16px;
+}
+.weather-card h3 {
+    text-align: center;
+    margin-bottom: 16px;
+}
+.weather-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.weather-grid-item {
+    text-align: center;
+    padding: 16px 0;
+}
+.weather-grid-item img {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 8px;
+}
+.time-label {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+.temperature-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.temperature-label p {
+    text-align: center;
+    font-weight: bold;
+}
+.temperature, .wind {
+    font-size: 14px;
+    margin: 4px 0;
+}
+.wind-label {
+    padding-left: 5px;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.wind-label p {
+    text-align: center;
+    font-weight: bold;
 }
