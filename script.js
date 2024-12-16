@@ -35,23 +35,74 @@ function handleNavigationClick(event) {
     document.querySelectorAll(".navigation a").forEach((link) => {
       link.classList.remove("active");
     });
-    
+
     target.classList.add("active");
-    
+
     mode = target.getAttribute("data-mode");
-    
+
     updateForecastHeader();
   }
 }
 
 function updateForecastHeader() {
-  const forecastHeader = document.querySelector('.forecast__header h2');
-  const forecastSubheader = document.querySelector('.forecast__header p');
-
-  // Обновляем заголовок и подзаголовок
-  forecastHeader.textContent = `Weather in ${cityName} for ${mode}`;
-  forecastSubheader.textContent = getFullLocationName();
+  const pageTitle = document.querySelector('.page-title h1');
+  pageTitle.textContent = `Weather in ${cityName} for ${mode}`;
 }
+
+function getWeatherIcon(id) {
+  if (id <= 232) return 'thunderstorm.png';
+  if (id <= 321) return 'drizzle.png';
+  if (id <= 531) return 'rain.png';
+  if (id <= 622) return 'snow.png';
+  if (id <= 781) return 'atmosphere.png';
+  if (id == 800) return 'clear.png';
+  else return 'clouds.png';
+}
+
+const getTemperatureColor = (temp) => {
+  // от -50 до -15
+  if (temp <= -50) return '#003f5c';
+  if (temp <= -45) return '#2f4b7c';
+  if (temp <= -40) return '#5a4b7c';
+  if (temp <= -35) return '#6a5c94';
+  if (temp <= -30) return '#7b6ea5';
+  if (temp <= -25) return '#8b7eb6';
+  if (temp <= -20) return '#a092d0';
+  if (temp <= -15) return '#b3a4e6';
+
+  // от -15 до 0
+  if (temp <= -10) return '#a0c4ff';
+  if (temp <= -5)  return '#9bf6ff';
+  if (temp <= 0)   return '#b9fbc0';
+
+  // от 0 до 15
+  if (temp <= 5)   return '#caffbf';
+  if (temp <= 10)  return '#fdffb6';
+  if (temp <= 15)  return '#ffeda0';
+
+  // от 15 до 50
+  if (temp <= 20)  return '#ffc857';
+  if (temp <= 25)  return '#ffa600';
+  if (temp <= 30)  return '#ee8979';
+  if (temp <= 35)  return '#d45087';
+  if (temp <= 40)  return '#b93c7a';
+  if (temp <= 45)  return '#933267';
+  if (temp <= 50)  return '#6a1b3c';
+
+  return '#6a1b3c';
+};
+
+const calculateOffset = (temp) => {
+  const baseOffset = -temp * 1.2;
+  return Math.max(-20, Math.min(20, baseOffset));
+};
+
+const getWindGradient = (wind) => {
+  if (wind >= 10) {
+    return `linear-gradient(to right, rgba(255, 200, 100, 0.7), rgba(255, 200, 100, 0.2))`;
+  }
+  return `linear-gradient(to right, rgba(200, 200, 200, 0.7), rgba(200, 200, 200, 0.2))`;
+};
 
 function getCityCoordinates() {
   const city = cityInput.value.trim();
@@ -122,20 +173,26 @@ function getWeatherDetails(name, lat, lon, country) {
       const temp = (data.main.temp - 273.15).toFixed(0);
       const feelsLike = (data.main.feels_like - 273.15).toFixed(0);
       const description = data.weather[0].description;
+      const iconId = data.weather[0].id;
       currentCountry = country;
       cityName = name;
 
       updateForecastHeader();
 
       currentWeather.innerHTML = `
-      <div class="current-weather__header">
-        ${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]} ${date.getHours()}:${date.getMinutes()} &ndash; ${cityName.toUpperCase()} (${currentCountry})
+      <div>
+        <div class="current-weather__header">
+          ${days[date.getDay()]} ${date.getDate()} ${months[date.getMonth()]} ${date.getHours()}:${date.getMinutes()}
+        </div>
+        <div class="current-weather__temperature">
+          ${description}, ${temp}&deg;C
+        </div>
+        <div class="current-weather__feels-like">
+          Feels like ${feelsLike}&deg;C
+        </div>
       </div>
-      <div class="current-weather__temperature">
-        In ${cityName} ${description}, ${(data.main.temp - 273.15).toFixed(0)}&deg;C
-      </div>
-      <div class="current-weather__feels-like">
-        Feels like ${feelsLike}&deg;C
+      <div class="current-weather__icon">
+        <img src="assets/${getWeatherIcon(iconId)}" alt="${description}">
       </div>
     `;
     })
@@ -183,35 +240,44 @@ function getWeatherDetails(name, lat, lon, country) {
                 ${Object.entries(times).map(([time, data]) => `
                     <div class="weather-grid-item">
                         <p class="time-label">${timeLabels[time]}</p>
-                        <img src="https://openweathermap.org/img/wn/${data.weather.icon}@2x.png" alt="${data.weather.description}">
+                        <img src="assets/${getWeatherIcon(data.weather.id)}" alt="${data.weather.description}">
                     </div>
                 `).join('')}
             </div>
             <div class="temperature-label">
-                <span class="material-icons">
-                  thermostat
-                </span>
                 <p>Temperature, °C</p>
             </div>
             <div class="weather-grid">
-                ${Object.entries(times).map(([time, data]) => `
-                    <div class="weather-grid-item">
-                        <p class="temperature-value">${(data.temp - 273.15).toFixed(0)}</p>
-                    </div>
-                `).join('')}
+              ${Object.entries(times).map(([time, data]) => {
+                const temperature = (data.temp - 273.15).toFixed(0);
+                const color = getTemperatureColor(temperature);
+                const offset = calculateOffset(temperature);
+      
+                return `
+                      <div 
+                          class="temperature-grid" 
+                          style="background-color: ${color}; transform: translateY(${offset}px);">
+                          <p class="temperature-bar">${temperature}</p>
+                      </div>
+                      `;
+              }).join('')}
             </div>
             <div class="wind-label">
-                <span class="material-icons">
-                  air
-                </span>
                 <p>Gusts of wind, m/s</p>
             </div>
             <div class="weather-grid">
-                ${Object.entries(times).map(([time, data]) => `
-                    <div class="weather-grid-item">
-                        <p class="wind-value">${data.wind.toFixed(0) || '—'}</p>
-                    </div>
-                `).join('')}
+                ${Object.entries(times).map(([time, data]) => {
+                  const wind = data.wind.toFixed(0);
+                  const background = getWindGradient(wind);
+        
+                  return `
+                        <div 
+                            class="wind-grid-item" 
+                            style="background: ${background};">
+                            <p class="wind-value"><i>${wind || '—'}</i></p>
+                        </div>
+                        `;
+                }).join('')}
             </div>
         </div>
     `;
@@ -252,4 +318,8 @@ container.addEventListener('mouseup', () => {
 container.addEventListener('mouseleave', () => {
   isDragging = false;
   container.classList.remove('active');
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  getUserCoordinates();
 });
