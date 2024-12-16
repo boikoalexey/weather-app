@@ -206,9 +206,14 @@ function getWeatherDetails(name, lat, lon, country) {
     .then(data => {
       console.log(data)
       const groupedData = {};
+      const today = new Date().toISOString().split('T')[0];
 
       data.list.forEach(item => {
         const [date, time] = item.dt_txt.split(' ');
+
+        if (date === today) {
+          return;
+        }
 
         if (!["00:00:00", "06:00:00", "12:00:00", "18:00:00"].includes(time)) {
           return;
